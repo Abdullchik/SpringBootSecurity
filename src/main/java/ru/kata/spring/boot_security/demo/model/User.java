@@ -3,7 +3,6 @@ package ru.kata.spring.boot_security.demo.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,8 +25,6 @@ public class User implements UserDetails {
 
     @Column(name = "name")
     private String name;
-    @Column(name = "surName")
-    private String surName;
 
     @Column(name = "password")
     private String pass;
@@ -39,9 +36,8 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roleList;
 
-    public User(String name, String surName, String pass, List<Role> roleList) {
+    public User(String name, String pass, List<Role> roleList) {
         this.name = name;
-        this.surName = surName;
         this.pass = pass;
         this.roleList = roleList;
     }
@@ -83,7 +79,7 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return "id " + id + " " + name + " " + surName;
+        return "id " + id + " " + name;
     }
 
     @Override

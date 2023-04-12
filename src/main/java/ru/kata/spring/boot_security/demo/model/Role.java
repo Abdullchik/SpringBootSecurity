@@ -19,6 +19,7 @@ public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(name = "name")
     private String name;
 
@@ -26,10 +27,10 @@ public class Role implements GrantedAuthority {
     @ManyToMany
     private List<User> users;
 
-    public Role(long id, String name) {
-        this.id = id;
+    public Role(String name) {
         this.name = name;
     }
+
 
     @Override
     public String getAuthority() {

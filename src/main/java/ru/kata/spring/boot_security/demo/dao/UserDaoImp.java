@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 
-
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 
@@ -24,8 +23,11 @@ public class UserDaoImp implements UserDao {
 
     @Override
     public User get(String username) {
-        System.out.println(username);
-        return entityManager.createQuery("from User where name=:user", User.class).setParameter("user", username).getResultList().get(0);
+        try {
+            return entityManager.createQuery("from User where name=:user", User.class).setParameter("user", username).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override

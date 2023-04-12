@@ -5,10 +5,9 @@
   <title>add user</title>
 </head>
 <body>
-<form th:method="DELETE" th:action="@{/main/deleteUser}">
+<form th:method="DELETE" th:action="@{/admin/deleteUser}">
   <label for="id">Id</label>
   <input name="id" type="text" id="id"/>
-  <h2 style="color: red" th:text="${message}"></h2>
   <input type="submit" value="delete user">
 </form>
 </body>
