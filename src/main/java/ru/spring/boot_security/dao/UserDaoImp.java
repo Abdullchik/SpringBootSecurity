@@ -1,12 +1,12 @@
 package ru.spring.boot_security.dao;
 
 
+
 import org.springframework.stereotype.Repository;
 import ru.spring.boot_security.model.User;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-
 @Repository
 public class UserDaoImp implements UserDao {
 

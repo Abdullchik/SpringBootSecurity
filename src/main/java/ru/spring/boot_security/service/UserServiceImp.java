@@ -9,24 +9,23 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.spring.boot_security.dao.UserDao;
 import ru.spring.boot_security.model.Role;
 import ru.spring.boot_security.model.User;
-import ru.spring.boot_security.repository.RoleRepository;
 
-import java.util.ArrayList;
+
+import javax.annotation.PostConstruct;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImp implements UserService, UserDetailsService {
-
-    private static boolean MARK;
-
     private final UserDao userDao;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
 
-    public UserServiceImp(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
+    public UserServiceImp(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder, RoleService roleService) {
         this.userDao = userDao;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -34,7 +33,6 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public void add(User user, List<String> roleNamesList) {
         userDao.add(UserCheck(user, roleNamesList));
     }
-
 
 
     @Transactional
@@ -58,36 +56,33 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public List<User> getUsersList() {
         return userDao.getUsersList();
     }
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        CreateAdmin();
         return userDao.get(username);
     }
 
-    //для создания учетки админа при запуске приложения
+    //для создания учетки админа при запуске
+    @PostConstruct
     @Transactional
     protected void CreateAdmin() {
-        if(!MARK) {
-            List<Role> roleList = List.of(new Role("ROLE_ADMIN"), new Role("ROLE_USER"));
-            roleRepository.saveAll(roleList);
-            userDao.add(new User("Admin", bCryptPasswordEncoder.encode("12345"), roleList));
-            MARK = true;
-        }
+            Set<Role> roleSet = Set.of(new Role("ROLE_ADMIN"), new Role("ROLE_USER"));
+            roleService.saveAll(roleSet);
+            userDao.add(new User("Admin", bCryptPasswordEncoder.encode("12345"), roleSet));
     }
 
     private User UserCheck (User user, List<String> roleNamesList) {
         if (userDao.get(user.getName()) != null) {
             throw new IllegalArgumentException("Пользователь с таким именем существует");
         }
-        List<Role> roleList = new ArrayList<>();
+        Set<Role> roleSet = new HashSet<>();
         System.out.println(roleNamesList);
         for (String s : roleNamesList) {
-            Role role = roleRepository.findByName(s);
-            roleList.add(role);
+            Role role = roleService.findByName(s);
+            roleSet.add(role);
         }
         user.setPass(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoleList(roleList);
+        user.setRoleSet(roleSet);
         return user;
     }
 

@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -34,17 +34,17 @@ public class User implements UserDetails {
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roleList;
+    private Set<Role> roleSet;
 
-    public User(String name, String pass, List<Role> roleList) {
+    public User(String name, String pass, Set<Role> roleSet) {
         this.name = name;
         this.pass = pass;
-        this.roleList = roleList;
+        this.roleSet = roleSet;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roleList;
+        return roleSet;
     }
 
     @Override
@@ -83,22 +83,15 @@ public class User implements UserDetails {
     }
 
     @Override
-    public int hashCode() {
-        return 12;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(name, user.name) && Objects.equals(pass, user.pass);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        return Objects.equals(getId(), ((User) obj).getId());
+    public int hashCode() {
+        return Objects.hash(id, name, pass);
     }
-
 }
