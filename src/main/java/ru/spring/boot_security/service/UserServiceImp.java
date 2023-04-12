@@ -1,5 +1,6 @@
 package ru.spring.boot_security.service;
 
+import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,10 +57,12 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public List<User> getUsersList() {
         return userDao.getUsersList();
     }
-    @Transactional(readOnly = true)
+    @Transactional()
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDao.get(username);
+        User user = userDao.get(username);
+        Hibernate.initialize(user.getRoleSet());
+        return user;
     }
 
     //для создания учетки админа при запуске
@@ -70,8 +73,8 @@ public class UserServiceImp implements UserService, UserDetailsService {
             roleService.saveAll(roleSet);
             userDao.add(new User("Admin", bCryptPasswordEncoder.encode("12345"), roleSet));
     }
-
-    private User UserCheck (User user, List<String> roleNamesList) {
+    @Transactional
+    protected User UserCheck (User user, List<String> roleNamesList) {
         if (userDao.get(user.getName()) != null) {
             throw new IllegalArgumentException("Пользователь с таким именем существует");
         }

@@ -1,12 +1,13 @@
 package ru.spring.boot_security.dao;
 
 
-
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.spring.boot_security.model.User;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+
 @Repository
 public class UserDaoImp implements UserDao {
 
@@ -15,7 +16,7 @@ public class UserDaoImp implements UserDao {
     public UserDaoImp(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
-
+    @Transactional
     @Override
     public void add(User user) {
         entityManager.persist(user);
@@ -23,11 +24,11 @@ public class UserDaoImp implements UserDao {
 
     @Override
     public User get(String username) {
-        try {
-            return entityManager.createQuery("from User where name=:user", User.class).setParameter("user", username).getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
+            try {
+                return entityManager.createQuery("from User where name=:user", User.class).setParameter("user", username).getSingleResult();
+            } catch (Exception e) {
+                return null;
+            }
     }
 
     @Override
