@@ -41,6 +41,11 @@ public class User implements UserDetails {
         this.roleSet = roleSet;
     }
 
+    public User(String name, String pass) {
+        this.name = name;
+        this.pass = pass;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roleSet;

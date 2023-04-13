@@ -11,8 +11,6 @@ import ru.spring.boot_security.dao.UserDao;
 import ru.spring.boot_security.model.Role;
 import ru.spring.boot_security.model.User;
 
-
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,15 +29,15 @@ public class UserServiceImp implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void add(User user, List<String> roleNamesList) {
-        userDao.add(UserCheck(user, roleNamesList));
+    public void add(User user, Set<String> roleNameSet) {
+        userDao.add(UserCheck(user, roleNameSet));
     }
 
 
     @Transactional
     @Override
-    public void update(User user, List<String> roleNamesList) {
-        userDao.update(UserCheck(user, roleNamesList));
+    public void update(User user, Set<String> roleNameSet) {
+        userDao.update(UserCheck(user, roleNameSet));
     }
 
     @Transactional
@@ -57,30 +55,25 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public List<User> getUsersList() {
         return userDao.getUsersList();
     }
+
     @Transactional()
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.get(username);
-        Hibernate.initialize(user.getRoleSet());
+        if (user != null) {
+            Hibernate.initialize(user.getRoleSet());
+        }
         return user;
     }
 
-    //для создания учетки админа при запуске
-    @PostConstruct
     @Transactional
-    protected void CreateAdmin() {
-            Set<Role> roleSet = Set.of(new Role("ROLE_ADMIN"), new Role("ROLE_USER"));
-            roleService.saveAll(roleSet);
-            userDao.add(new User("Admin", bCryptPasswordEncoder.encode("12345"), roleSet));
-    }
-    @Transactional
-    protected User UserCheck (User user, List<String> roleNamesList) {
+    protected User UserCheck(User user, Set<String> roleNameSet) {
         if (userDao.get(user.getName()) != null) {
             throw new IllegalArgumentException("Пользователь с таким именем существует");
         }
         Set<Role> roleSet = new HashSet<>();
-        System.out.println(roleNamesList);
-        for (String s : roleNamesList) {
+        System.out.println(roleNameSet);
+        for (String s : roleNameSet) {
             Role role = roleService.findByName(s);
             roleSet.add(role);
         }

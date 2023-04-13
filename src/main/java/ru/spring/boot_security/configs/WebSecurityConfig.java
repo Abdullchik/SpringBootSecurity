@@ -9,12 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-import ru.spring.boot_security.model.Role;
-import ru.spring.boot_security.model.User;
-
-import javax.annotation.PostConstruct;
-import java.util.Set;
 
 @Configuration
 @EnableWebSecurity

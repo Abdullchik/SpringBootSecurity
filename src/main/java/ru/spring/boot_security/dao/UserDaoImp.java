@@ -2,7 +2,6 @@ package ru.spring.boot_security.dao;
 
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.spring.boot_security.model.User;
 
 import javax.persistence.EntityManager;
@@ -16,7 +15,6 @@ public class UserDaoImp implements UserDao {
     public UserDaoImp(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
-    @Transactional
     @Override
     public void add(User user) {
         entityManager.persist(user);

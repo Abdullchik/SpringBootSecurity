@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.spring.boot_security.model.User;
 import ru.spring.boot_security.service.UserService;
 
-import java.util.Arrays;
+import java.util.Set;
 
 
 @RequestMapping("/admin")
@@ -31,8 +31,8 @@ public class AdminController {
     }
 
     @PostMapping("/createUser")
-    public String createUser(@ModelAttribute("user") User user, @RequestParam("role[]") String[] roleNameList) {
-        userService.add(user, Arrays.asList(roleNameList));
+    public String createUser(@ModelAttribute("user") User user, @RequestParam("role[]") String[] roleNameSet) {
+        userService.add(user, Set.of(roleNameSet));
         return "redirect:/admin";
     }
 
@@ -42,8 +42,8 @@ public class AdminController {
     }
 
     @PatchMapping("/updateUser")
-    public String updateUser(@ModelAttribute("user") User user, @RequestParam("role[]") String[] roleNameList) {
-        userService.update(user, Arrays.asList(roleNameList));
+    public String updateUser(@ModelAttribute("user") User user, @RequestParam("role[]") String[] roleNameSet) {
+        userService.update(user, Set.of(roleNameSet));
         return "redirect:/admin";
     }
 

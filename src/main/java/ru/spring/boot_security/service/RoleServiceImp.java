@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.spring.boot_security.dao.RoleDao;
 import ru.spring.boot_security.model.Role;
 
-import java.util.Set;
+
 
 @Service
 public class RoleServiceImp implements RoleService{
@@ -25,10 +25,5 @@ public class RoleServiceImp implements RoleService{
     public Role findByName(String roleName) {
         return roleDao.findByName(roleName);
     }
-    @Transactional
-    @Override
-    public void saveAll(Set<Role> roleSet) {
-        for(Role r: roleSet) {
-            roleDao.add(r);        }
-    }
+
 }
